@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import shopListData from "/__fixtures__/shoplist.js";
-
+import FilterType from "./FilterType";
 
 const ShoppingList = () => {
   const [filter, setFilter] = useState("other"); // Стейт для выбранного фильтра
@@ -10,48 +10,32 @@ const ShoppingList = () => {
   const filteredList =
     filter === "All" ? items : items.filter((item) => item.type === filter);
 
-  // Обработчик изменения фильтра
+  const sortedList = filteredList.sort((a, b) => {
+    if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;  // Сортировка по возрастанию
+    if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+    return 0;  // Если наименования одинаковы
+  });
+
   const handleFilterChange = (event) => {
-    setFilter(event.target.value);
+    setFilter(event.target.value);  // Обновляем состояние при изменении фильтра
   };
 
   return (
     <div id="container" className="container m-3">
       <div className="shopList">
         <h3>Список покупок:</h3>
-        <div className="controls">
-          <select
-            name="itemtype"
-            id="itemtype"
-            value={filter}
-            onChange={handleFilterChange}
-          >
-            <option value="perfume">Парфюмерия</option>
-            <option value="vegetables">Овощи</option>
-            <option value="fruits">Фрукты</option>
-            <option value="meat">Мясо</option>
-            <option value="other">Прочее</option>
-          </select>
-        </div>
+        <FilterType filter={filter} onFilterChange={handleFilterChange} />
         <table
           className="shopTable"
           border="1"
           cellPadding="10"
           style={{ marginTop: "20px", width: "100%" }}
         >
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Price</th>
-            </tr>
-          </thead>
           <tbody>
             {filteredList.map((item) => (
               <tr key={item.id}>
-                <td>{item.id}</td>
                 <td>{item.name}</td>
+                <td>{item.id}</td>
                 <td>{item.type}</td>
                 <td>{item.price}</td>
               </tr>
